@@ -10,7 +10,7 @@ This file contains a MazeGame class."""
 
 import pygame
 from sys import exit
-from maze.py import Maze
+from maze import Maze
 
 
 class MazeGame:
@@ -37,31 +37,35 @@ class MazeGame:
         self._time_limit = time_limit
 
     def run(self) -> None:
+        """Run the game!"""
         pygame.init()
-        screen = pygame.display.set_mode((200, 200))
+        screen = pygame.display.set_mode(self.screen_size())
 
-        red = (255, 0, 0)
+        white = (255, 255, 255)
         running = True
         while running:
-            screen.fill(red)
+            screen.fill(white)
             pygame.display.flip()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
         exit()
-    def create_screen_size(self) -> tuple[int, int]:
+    def screen_size(self) -> tuple[int, int]:
         """Decide how big the size of the screen have to be, in order to contain the maze."""
-        maze_size = tuple()
+        maze_size = []
         if isinstance(self._difficulty, int):
-            match self._difficulty:
-                case 1:
-                    maze_size = 7, 7
-                case 2:
-                    maze_size = 10, 10
-                case 3:
-                    maze_size = 15, 15
-                case 4:
-                    maze_size = 20, 20
-        else:
-
+            if self._difficulty == 1:
+                maze_size = [7, 7]
+            elif self._difficulty == 1:
+                maze_size = [10, 10]
+            elif self._difficulty == 1:
+                maze_size = [15, 15]
+            elif self._difficulty == 1:
+                maze_size = [20, 20]
+            else:
+                raise ValueError
+        else:  # if self._difficulty is in a tuple form
+            maze_size = list(self._difficulty)
+        screen_size = (maze_size[0] * 2 + 1) * 30 + 200, (maze_size[1] * 2 + 1) * 30 + 200
+        return screen_size
 
