@@ -11,7 +11,7 @@ This file contains a MazeGame class."""
 import pygame
 from sys import exit
 
-
+#hi
 class MazeGame:
     """MazeGame class where user can run a game.
 
@@ -24,7 +24,7 @@ class MazeGame:
         self._cycles = cycles
         self._time_limit = time_limit
 
-    #hi 3
+
     def run(self) -> None:
         pygame.init()
         screen = pygame.display.set_mode((200, 200))
