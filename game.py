@@ -15,8 +15,12 @@ from sys import exit
 class MazeGame:
     """MazeGame class where user can run a game.
 
-    Private Instance Attributes"""
-    _difficulty: int
+    Private Instance Attributes:
+        - _difficulty: defines the difficulty of the maze
+        - _cycles: set if there is a cycle in the maze,
+            which causes the maze to have multiple solutions
+    """
+    _difficulty: int | tuple[int, int]
     _cycles: bool
     _time_limit: int
     def __init__(self, difficulty: int, cycles: bool, time_limit: int) -> None:
