@@ -10,9 +10,9 @@ This file contains a MazeGame class."""
 
 import pygame
 from sys import exit
+from maze.py import Maze
 
 
-#hellneeo 3
 class MazeGame:
     """MazeGame class where user can run a game.
 
@@ -36,7 +36,6 @@ class MazeGame:
         self._cycles = cycles
         self._time_limit = time_limit
 
-
     def run(self) -> None:
         pygame.init()
         screen = pygame.display.set_mode((200, 200))
@@ -50,5 +49,19 @@ class MazeGame:
                 if event.type == pygame.QUIT:
                     running = False
         exit()
-    # def create_screen_size(self) -> tuple[int, int]:
-    # if self._difficulty == '1': # Easy
+    def create_screen_size(self) -> tuple[int, int]:
+        """Decide how big the size of the screen have to be, in order to contain the maze."""
+        maze_size = tuple()
+        if isinstance(self._difficulty, int):
+            match self._difficulty:
+                case 1:
+                    maze_size = 7, 7
+                case 2:
+                    maze_size = 10, 10
+                case 3:
+                    maze_size = 15, 15
+                case 4:
+                    maze_size = 20, 20
+        else:
+
+
