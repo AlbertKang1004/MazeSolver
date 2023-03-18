@@ -20,12 +20,19 @@ class Graph:
     Private Instance Attributes:
         - _vertices:
              A collection of the vertices contained in this graph.
-    #        Maps item to _Vertex object.
+             Maps item to _Vertex object.
+
+    Instance Attributes:
+        - edges:
+            A list of edges.
+
     """
     _vertices: dict[tuple[int, int], _Vertex]
+    edges: list[set[tuple]]
 
     def __init__(self) -> None:
         self._vertices = {}
+        self.edges = []
 
     def add_vertex(self, x: int, y: int) -> None:
         """Add a vertex with the given co-ordinates to this graph.
@@ -55,6 +62,7 @@ class Graph:
 
             v1.neighbours.add(v2)
             v2.neighbours.add(v1)
+            self.edges.append({v1, v2})
         else:
             raise ValueError
 
