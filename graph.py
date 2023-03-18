@@ -28,7 +28,7 @@ class Graph:
 
     """
     _vertices: dict[tuple[int, int], _Vertex]
-    edges: set[tuple[_Vertex, _Vertex]]
+    edges: set[tuple]
 
     def __init__(self) -> None:
         self._vertices = {}
