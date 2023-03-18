@@ -15,7 +15,7 @@ import random
 
 @check_contracts
 class Graph:
-    """A graph.
+    """A graph that is used to represent the maze.
 
     Private Representation Invariants:
         - _vertices:
