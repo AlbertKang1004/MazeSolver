@@ -51,8 +51,10 @@ class MazeGame:
                     running = False
         exit()
     def screen_size(self) -> tuple[int, int]:
-        """Decide how big the size of the screen have to be, in order to contain the maze."""
-        maze_size = []
+        """Decide how big the size of the screen have to be, in order to contain the maze.
+        each blocks of the maze will be 25 * 25 in size,
+        and the whole maze will be hovered with a space of 100 pixels.
+        """
         if isinstance(self._difficulty, int):
             if self._difficulty == 1:
                 maze_size = [7, 7]
@@ -69,3 +71,5 @@ class MazeGame:
         screen_size = (maze_size[0] * 2 + 1) * 30 + 200, (maze_size[1] * 2 + 1) * 30 + 200
         return screen_size
 
+    def draw_maze_on_screen(self, maze: Maze) -> None:
+        maze_arr = maze.maze_graph_to_2d_array()

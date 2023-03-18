@@ -76,25 +76,25 @@ class Maze:
     def maze_graph_to_2d_array(self) -> list[list[bool]]:
         """Convert maze in a graph form into a 2-dimensional array,
         so it is easier to visualize.
-        - True means it's opened
-        - False means it's closed
+        - True means it's opened -> 1
+        - False means it's closed -> 0
         """
-        maze_array = [[x % 2 == 1 and y % 2 == 1 for x in range(self.width * 2 + 1)]
-                      for y in range(self.height * 2 + 1)]
-        # Note that maze_array's index is in [y][x] order, due to the implementation.
+        maze_array = [[x % 2 == 1 and y % 2 == 1 for y in range(self.width * 2 + 1)]
+                      for x in range(self.height * 2 + 1)]
+        # Note that maze_array's index is in [x][y] order.
 
         # make the starting point and the ending point
-        maze_array[0][1] = True
-        maze_array[self.height * 2][self.width * 2 - 1] = True
+        maze_array[1][0] = True
+        maze_array[self.width * 2 - 1][self.height * 2] = True
 
         edges = deepcopy(self.edges)
         for edge in edges:
             point1 = edge.pop()
             point2 = edge.pop()
             if point1[0] == point2[0]:  # if x-coordinates are the same
-                maze_array[max(point1[1], point2[1]) * 2][point1[0] * 2 + 1] = True
+                maze_array[point1[0] * 2 + 1][max(point1[1], point2[1]) * 2] = True
             else: # if y-coordinates are the same
-                maze_array[point1[1] * 2 + 1][max(point1[0], point2[0]) * 2] = True
+                maze_array[max(point1[0], point2[0]) * 2][point1[1] * 2 + 1] = True
         return maze_array
 
     def add_cycle(self, num_cycles: int) -> None:
@@ -123,7 +123,7 @@ def print_2d_array(maze: list[list[bool]]):
     """Print two-dimensional array with emojis."""
     for y in range(len(maze)):
         for x in range(len(maze[0])):
-            if maze[y][x]:
+            if maze[x][y]:
                 print('⬛', end="")
             else:
                 print('⬜', end="")
