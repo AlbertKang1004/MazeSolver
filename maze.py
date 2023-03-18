@@ -106,8 +106,8 @@ class Maze:
     def add_cycle(self, num_cycles: int) -> None:
         """Add a user-specified number of cycles into the Maze."""
 
-        random_index = random.randint(0, len(self.removed_edges))
-        self.MazeGraph.add_edge(self.removed_edges.pop(random_index))
+        random_index = random.choice(self._removed_edges)
+        self.MazeGraph.add_edge(self._removed_edges.pop(random_index))
 
 
 def print_2d_array(maze: list[list[bool]]):
