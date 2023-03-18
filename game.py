@@ -11,7 +11,8 @@ This file contains a MazeGame class."""
 import pygame
 from sys import exit
 
-#hi
+
+#hello
 class MazeGame:
     """MazeGame class where user can run a game.
 
