@@ -102,7 +102,7 @@ class _Vertex:
         self.loc = loc
         self.neighbours = neighbours
 
-    def get_spanning_tree(self, visited: set[_Vertex]) -> list[set]:
+    def get_spanning_tree(self, visited: set[_Vertex]) -> set[tuple]:
         """Return a spanning tree for all items this vertex is connected to,
         WITHOUT using any of the vertices in visited.
 
@@ -115,7 +115,7 @@ class _Vertex:
 
         for u in self.neighbours:
             if u not in visited:
-                edges_so_far.append({self.loc, u.loc})
+                edges_so_far.append((self.loc, u.loc))
                 edges_so_far.extend(u.get_spanning_tree(visited))
 
         return edges_so_far
