@@ -68,7 +68,7 @@ class Maze:
 
         # At this point, the graph would form a rectangular shape. (like a chess board)
         # Now, we remove all the cycles inside the graph and initialize the new graph.
-        self.edges = full_graph.spanning_tree()  # set[tuple]
+        self.edges = full_graph.spanning_tree()  # list[tuple]
         edges_copy = deepcopy(self.edges)
         for edge in edges_copy:
             self.MazeGraph.add_edge(edge[0], edge[1])
@@ -76,7 +76,7 @@ class Maze:
         # stores the removed edges that would make a cycle in the maze..
         self._removed_edges = []
         for edge in original_edges:
-            if not (edge in self.edges or (edge[0] == edge[1] and edge[1] == edge[0])):
+            if not (edge in self.edges or (edge[1], edge[0]) in self.edges):
                 self._removed_edges.append(edge)
 
         print()
@@ -115,7 +115,7 @@ class Maze:
             self._removed_edges.remove(random_edge)
             v1 = random_edge[0]
             v2 = random_edge[1]
-            self.MazeGraph.add_edge(v1, v2)
+            self.edges.append((v1, v2))
 
 
 def print_2d_array(maze: list[list[bool]]):
