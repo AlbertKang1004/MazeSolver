@@ -103,7 +103,7 @@ def print_2d_array(maze: list[list[bool]]):
     for y in range(len(maze)):
         for x in range(len(maze[0])):
             if maze[y][x]:
-                print('⬜', end="")
-            else:
                 print('⬛', end="")
+            else:
+                print('⬜', end="")
         print()
