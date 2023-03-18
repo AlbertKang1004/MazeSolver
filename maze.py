@@ -75,7 +75,7 @@ class Maze:
             self.MazeGraph.add_edge(edge.pop(), edge.pop())
 
         # stores the removed edges that would make a cycle in the maze
-        self.removed_edges = list(set(self._original_edges + self.edges))
+        self.removed_edges = list(set.difference(set(self._original_edges) - set(self.edges)))
 
         # We have chosen vertex located at (0, 0) to be the starting point
         # and vertex located at (width - 1, height - 1) to be the ending point
@@ -83,8 +83,8 @@ class Maze:
     def maze_graph_to_2d_array(self) -> list[list[int]]:
         """Convert maze in a graph form into a 2-dimensional array,
         so it is easier to visualize.
-        - True means it's opened -> 1
-        - False means it's closed -> 0
+        - 1 means it's opened
+        - 0 means it's closed
         """
         maze_array = [[1 if (x % 2 == 1 and y % 2 == 1) else 0 for y in range(self.width * 2 + 1)]
                       for x in range(self.height * 2 + 1)]
