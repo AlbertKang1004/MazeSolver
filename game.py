@@ -73,3 +73,4 @@ class MazeGame:
 
     def draw_maze_on_screen(self, maze: Maze) -> None:
         maze_arr = maze.maze_graph_to_2d_array()
+        if maze_

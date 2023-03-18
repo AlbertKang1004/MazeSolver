@@ -73,28 +73,28 @@ class Maze:
         # We have chosen vertex located at (0, 0) to be the starting point
         # and vertex located at (width - 1, height - 1) to be the ending point
 
-    def maze_graph_to_2d_array(self) -> list[list[bool]]:
+    def maze_graph_to_2d_array(self) -> list[list[int]]:
         """Convert maze in a graph form into a 2-dimensional array,
         so it is easier to visualize.
         - True means it's opened -> 1
         - False means it's closed -> 0
         """
-        maze_array = [[x % 2 == 1 and y % 2 == 1 for y in range(self.width * 2 + 1)]
+        maze_array = [[1 if (x % 2 == 1 and y % 2 == 1) else 0 for y in range(self.width * 2 + 1)]
                       for x in range(self.height * 2 + 1)]
         # Note that maze_array's index is in [x][y] order.
 
         # make the starting point and the ending point
-        maze_array[1][0] = True
-        maze_array[self.width * 2 - 1][self.height * 2] = True
+        maze_array[1][0] = 1
+        maze_array[self.width * 2 - 1][self.height * 2] = 1
 
         edges = deepcopy(self.edges)
         for edge in edges:
             point1 = edge.pop()
             point2 = edge.pop()
             if point1[0] == point2[0]:  # if x-coordinates are the same
-                maze_array[point1[0] * 2 + 1][max(point1[1], point2[1]) * 2] = True
+                maze_array[point1[0] * 2 + 1][max(point1[1], point2[1]) * 2] = 1
             else: # if y-coordinates are the same
-                maze_array[max(point1[0], point2[0]) * 2][point1[1] * 2 + 1] = True
+                maze_array[max(point1[0], point2[0]) * 2][point1[1] * 2 + 1] = 1
         return maze_array
 
     def add_cycle(self, num_cycles: int) -> None:
@@ -123,7 +123,7 @@ def print_2d_array(maze: list[list[bool]]):
     """Print two-dimensional array with emojis."""
     for y in range(len(maze)):
         for x in range(len(maze[0])):
-            if maze[x][y]:
+            if maze[x][y] == 1:
                 print('⬛', end="")
             else:
                 print('⬜', end="")
