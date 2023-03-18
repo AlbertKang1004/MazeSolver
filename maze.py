@@ -36,7 +36,6 @@ class Maze:
     MazeGraph: Graph
     edges: list[set[tuple]]
     _removed_edges: list[set[tuple]]
-    _original_edges: list[set[tuple]]
 
     def __init__(self, width: int, height: int) -> None:
         """Initialize a maze with a specified width and height"""
@@ -65,7 +64,7 @@ class Maze:
                     else:  # lower-right corner of the maze
                         pass
 
-        self._original_edges = self.edges
+        original_edges = self.edges
 
         # At this point, the graph would form a rectangular shape. (like a chess board)
         # Now, we remove all the cycles inside the graph and initialize the new graph.
@@ -75,7 +74,7 @@ class Maze:
             self.MazeGraph.add_edge(edge.pop(), edge.pop())
 
         # stores the removed edges that would make a cycle in the maze
-        self._removed_edges = list(set(self._original_edges + self.edges))
+        self._removed_edges = list(set.difference(set(original_edges), set(self.edges)))
 
         # We have chosen vertex located at (0, 0) to be the starting point
         # and vertex located at (width - 1, height - 1) to be the ending point
