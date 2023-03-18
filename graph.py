@@ -17,7 +17,7 @@ import random
 class Graph:
     """A graph that is used to represent the maze.
 
-    Private Representation Invariants:
+    Private Instance Attributes:
         - _vertices:
              A collection of the vertices contained in this graph.
     #        Maps item to _Vertex object.
