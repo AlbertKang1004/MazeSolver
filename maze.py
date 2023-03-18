@@ -11,10 +11,10 @@ This file contains a maze class, which includes various fundcions."""
 from graph import Graph
 from copy import deepcopy
 import random
-from python_ta.contracts import check_contracts
+# from python_ta.contracts import check_contracts
 
 
-@check_contracts
+# @check_contracts
 class Maze:
     """A Maze represented in a graph.
 

@@ -9,11 +9,11 @@ Group Members:
 This file contains a basic Graph implementation, for future use."""
 
 from __future__ import annotations
-from python_ta.contracts import check_contracts
+# from python_ta.contracts import check_contracts
 import random
 
 
-@check_contracts
+# @check_contracts
 class Graph:
     """A graph that is used to represent the maze.
 
@@ -75,7 +75,7 @@ class Graph:
         return start_vertex.get_spanning_tree(set())
 
 
-@check_contracts
+# @check_contracts
 class _Vertex:
     """A vertex in the MazeGraph.
 
