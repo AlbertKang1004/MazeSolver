@@ -97,6 +97,18 @@ class Maze:
                 maze_array[point1[1] * 2 + 1][max(point1[0], point2[0]) * 2] = True
         return maze_array
 
+    def add_cycle(self, num_cycles: int) -> None:
+        """Add a user-specified number of cycles into the Maze."""
+        count = 0
+
+        while count != num_cycles:
+            rand_x = random.randint(0, self.width)
+            rand_y = random.randint(0, self.height)
+
+            if (rand_x, rand_y) not in self.edges:
+                self.add_edge(rand_x, rand_y)
+                count += 1
+
 
 def print_2d_array(maze: list[list[bool]]):
     """Print two-dimensional array with emojis."""
@@ -107,16 +119,3 @@ def print_2d_array(maze: list[list[bool]]):
             else:
                 print('⬜', end="")
         print()
-
-
-def add_cycle(self, num_cycles: int) -> None:
-    """Add a user-specified number of cycles into the Maze."""
-    count = 0
-
-    while count != num_cycles:
-        rand_x = random.randint(0, self.width)
-        rand_y = random.randint(0, self.height)
-
-        if (rand_x, rand_y) not in self.edges:
-            self.add_edge(rand_x, rand_y)
-            count += 1
