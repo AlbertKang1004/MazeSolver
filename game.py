@@ -12,7 +12,7 @@ import pygame
 from sys import exit
 
 
-#hello
+#hello 3
 class MazeGame:
     """MazeGame class where user can run a game.
 
