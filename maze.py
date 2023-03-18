@@ -84,7 +84,6 @@ class Maze:
         # Note that maze_array's index is in [y][x] order, due to the implementation.
 
         # make the starting point and the ending point
-        # hi gfgdg
         maze_array[0][1] = True
         maze_array[self.height * 2][self.width * 2 - 1] = True
 
@@ -108,3 +107,15 @@ def print_2d_array(maze: list[list[bool]]):
             else:
                 print('⬜', end="")
         print()
+
+def add_cycle(self, num_cycles: int) -> None:
+    """Add a user-specified number of cycles into the Maze."""
+    count = 0
+
+    while count != num_cycles:
+        rand_x = random.randint(0, self.width)
+        rand_y = random.randint(0, self.height)
+
+        if (rand_x, rand_y) not in self.edges:
+            self.add_edge(rand_x, rand_y)
+            count += 1
