@@ -104,7 +104,7 @@ class _Vertex:
 
     def get_spanning_tree(self, visited: set[_Vertex]) -> set[tuple]:
         """Return a spanning tree for all items this vertex is connected to,
-        WITHOUT using any of the vertices in visited.
+        without using any of the vertices in visited.
 
         Preconditions:
             - self not in visited
