@@ -73,7 +73,7 @@ class Maze:
         for edge in edges_copy:
             self.MazeGraph.add_edge(edge[0], edge[1])
 
-        # stores the removed edges that would make a cycle in the maze
+        # stores the removed edges that would make a cycle in the maze.
         self._removed_edges = set.difference(set(original_edges), set(self.edges))
 
         # We have chosen vertex located at (0, 0) to be the starting point
