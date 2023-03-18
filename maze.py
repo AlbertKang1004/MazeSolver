@@ -84,7 +84,7 @@ class Maze:
         # Note that maze_array's index is in [y][x] order, due to the implementation.
 
         # make the starting point and the ending point
-        # hi
+        # hi g
         maze_array[0][1] = True
         maze_array[self.height * 2][self.width * 2 - 1] = True
 
