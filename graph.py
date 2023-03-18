@@ -67,7 +67,7 @@ class Graph:
         else:
             raise ValueError
 
-    def spanning_tree(self) -> list[set[tuple[int, int]]]:
+    def spanning_tree(self) -> list[tuple[int, int]]:
         """Return a subset of the edges of this graph that form a spanning tree.
 
         The edges are returned as a list of sets, where each set contains the two
