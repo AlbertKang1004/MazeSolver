@@ -35,6 +35,8 @@ class Maze:
     width: int
     MazeGraph: Graph
     edges: list[set[tuple]]
+    _removed_edges: list[set[tuple]]
+    _original_edges: list[set[tuple]]
 
     def __init__(self, width: int, height: int) -> None:
         """Initialize a maze with a specified width and height"""
@@ -63,12 +65,17 @@ class Maze:
                     else:  # lower-right corner of the maze
                         pass
 
+        self._original_edges = self.edges
+
         # At this point, the graph would form a rectangular shape. (like a chess board)
         # Now, we remove all the cycles inside the graph and initialize the new graph.
         self.edges = full_graph.spanning_tree()
         edges = deepcopy(self.edges)
         for edge in edges:
             self.MazeGraph.add_edge(edge.pop(), edge.pop())
+
+        # stores the removed edges that would make a cycle in the maze
+        self.removed_edges = list(set(self._original_edges + self.edges))
 
         # We have chosen vertex located at (0, 0) to be the starting point
         # and vertex located at (width - 1, height - 1) to be the ending point
@@ -99,24 +106,9 @@ class Maze:
 
     def add_cycle(self, num_cycles: int) -> None:
         """Add a user-specified number of cycles into the Maze."""
-        count = 0
 
-        while count != num_cycles:
-            rand_x = random.randint(0, self.width)
-            rand_y = random.randint(0, self.height)
-
-            if rand_x != self.width and ((rand_x, rand_y), (rand_x + 1, rand_y)) not in self.edges:
-                self.MazeGraph.add_edge((rand_x, rand_y), (rand_x + 1, rand_y))
-                count += 1
-            elif rand_y != self.height and ((rand_x, rand_y), (rand_x, rand_y + 1)) not in self.edges:
-                self.MazeGraph.add_edge((rand_x, rand_y), (rand_x, rand_y + 1))
-                count += 1
-            elif rand_x != 0 and ((rand_x, rand_y), (rand_x - 1, rand_y)) not in self.edges:
-                self.MazeGraph.add_edge((rand_x, rand_y), (rand_x - 1, rand_y))
-                count += 1
-            elif rand_y != 0 and ((rand_x, rand_y), (rand_x, rand_y - 1)) not in self.edges:
-                self.MazeGraph.add_edge((rand_x, rand_y), (rand_x, rand_y - 1))
-                count += 1
+        random_index = random.randint(0, len(self.removed_edges))
+        self.MazeGraph.add_edge(self.removed_edges.pop(random_index))
 
 
 def print_2d_array(maze: list[list[bool]]):
