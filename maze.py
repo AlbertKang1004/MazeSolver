@@ -75,7 +75,7 @@ class Maze:
             self.MazeGraph.add_edge(edge.pop(), edge.pop())
 
         # stores the removed edges that would make a cycle in the maze
-        self.removed_edges = list(set(self._original_edges + self.edges))
+        self._removed_edges = list(set(self._original_edges + self.edges))
 
         # We have chosen vertex located at (0, 0) to be the starting point
         # and vertex located at (width - 1, height - 1) to be the ending point
@@ -107,8 +107,8 @@ class Maze:
     def add_cycle(self, num_cycles: int) -> None:
         """Add a user-specified number of cycles into the Maze."""
 
-        random_index = random.randint(0, len(self.removed_edges))
-        self.MazeGraph.add_edge(self.removed_edges.pop(random_index))
+        random_index = random.randint(0, len(self._removed_edges))
+        self.MazeGraph.add_edge(self._removed_edges.pop(random_index))
 
 
 def print_2d_array(maze: list[list[bool]]):
