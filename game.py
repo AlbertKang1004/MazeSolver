@@ -24,7 +24,7 @@ class MazeGame:
         self._cycles = cycles
         self._time_limit = time_limit
 
-    #test
+    #hi
 
     def run(self) -> None:
         pygame.init()
