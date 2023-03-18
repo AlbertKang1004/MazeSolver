@@ -108,6 +108,7 @@ def print_2d_array(maze: list[list[bool]]):
                 print('⬜', end="")
         print()
 
+
 def add_cycle(self, num_cycles: int) -> None:
     """Add a user-specified number of cycles into the Maze."""
     count = 0
