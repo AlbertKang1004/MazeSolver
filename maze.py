@@ -111,7 +111,8 @@ class Maze:
         """Add a user-specified number of cycles into the Maze."""
 
         for _ in range(0, num_cycles):
-            random_edge = random.choice(self._removed_edges)
+            random_edge = random.choice(list(self._removed_edges))
+            self._removed_edges.remove(random_edge)
             v1 = random_edge[0]
             v2 = random_edge[1]
             self.MazeGraph.add_edge(v1, v2)
