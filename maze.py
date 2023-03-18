@@ -73,7 +73,7 @@ class Maze:
         for edge in edges_copy:
             self.MazeGraph.add_edge(edge[0], edge[1])
 
-        # stores the removed edges that would make a cycle in the maze.
+        # stores the removed edges that would make a cycle in the maze..
         self._removed_edges = []
         for edge in original_edges:
             if not (edge in self.edges or (edge[0] == edge[1] and edge[1] == edge[0])):
