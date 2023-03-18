@@ -24,6 +24,8 @@ class MazeGame:
         self._cycles = cycles
         self._time_limit = time_limit
 
+    #test
+
     def run(self) -> None:
         pygame.init()
         screen = pygame.display.set_mode((200, 200))
@@ -39,4 +41,3 @@ class MazeGame:
         exit()
     # def create_screen_size(self) -> tuple[int, int]:
     # if self._difficulty == '1': # Easy
-
