@@ -28,11 +28,11 @@ class Graph:
 
     """
     _vertices: dict[tuple[int, int], _Vertex]
-    edges: list[set[tuple]]
+    edges: set[tuple[_Vertex, _Vertex]]
 
     def __init__(self) -> None:
         self._vertices = {}
-        self.edges = []
+        self.edges = set()
 
     def add_vertex(self, x: int, y: int) -> None:
         """Add a vertex with the given co-ordinates to this graph.
@@ -62,7 +62,7 @@ class Graph:
 
             v1.neighbours.add(v2)
             v2.neighbours.add(v1)
-            self.edges.append({v1, v2})
+            self.edges.add((v1, v2))
         else:
             raise ValueError
 
