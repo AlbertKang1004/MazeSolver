@@ -28,7 +28,7 @@ class Graph:
 
     """
     _vertices: dict[tuple[int, int], _Vertex]
-    edges: set[tuple[_Vertex, _Vertex]]
+    edges: set[tuple[tuple, tuple]]
 
     def __init__(self) -> None:
         self._vertices = {}
@@ -62,7 +62,8 @@ class Graph:
 
             v1.neighbours.add(v2)
             v2.neighbours.add(v1)
-            self.edges.add((v1, v2))
+            edge = (v1.loc, v2.loc)
+            self.edges.add(edge)
         else:
             raise ValueError
 
@@ -102,7 +103,7 @@ class _Vertex:
         self.loc = loc
         self.neighbours = neighbours
 
-    def get_spanning_tree(self, visited: set[_Vertex]) -> set[tuple]:
+    def get_spanning_tree(self, visited: set[_Vertex]) -> list[tuple]:
         """Return a spanning tree for all items this vertex is connected to,
         without using any of the vertices in visited.
 
