@@ -34,8 +34,8 @@ class Maze:
     height: int
     width: int
     MazeGraph: Graph
-    edges: list[set[tuple]]
-    _removed_edges: list[set[tuple]]
+    edges: set[tuple]
+    _removed_edges: set[tuple]
 
     def __init__(self, width: int, height: int) -> None:
         """Initialize a maze with a specified width and height"""
