@@ -105,8 +105,17 @@ class Maze:
             rand_x = random.randint(0, self.width)
             rand_y = random.randint(0, self.height)
 
-            if (rand_x, rand_y) not in self.edges:
-                self.add_edge(rand_x, rand_y)
+            if rand_x != self.width and ((rand_x, rand_y), (rand_x + 1, rand_y)) not in self.edges:
+                self.MazeGraph.add_edge((rand_x, rand_y), (rand_x + 1, rand_y))
+                count += 1
+            elif rand_y != self.height and ((rand_x, rand_y), (rand_x, rand_y + 1)) not in self.edges:
+                self.MazeGraph.add_edge((rand_x, rand_y), (rand_x, rand_y + 1))
+                count += 1
+            elif rand_x != 0 and ((rand_x, rand_y), (rand_x - 1, rand_y)) not in self.edges:
+                self.MazeGraph.add_edge((rand_x, rand_y), (rand_x - 1, rand_y))
+                count += 1
+            elif rand_y != 0 and ((rand_x, rand_y), (rand_x, rand_y - 1)) not in self.edges:
+                self.MazeGraph.add_edge((rand_x, rand_y), (rand_x, rand_y - 1))
                 count += 1
 
 
