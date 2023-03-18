@@ -24,8 +24,7 @@ class MazeGame:
         self._cycles = cycles
         self._time_limit = time_limit
 
-    #hello
-
+    #hi there
     def run(self) -> None:
         pygame.init()
         screen = pygame.display.set_mode((200, 200))
