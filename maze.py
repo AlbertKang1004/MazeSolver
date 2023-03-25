@@ -21,10 +21,9 @@ class Maze:
     Instance Attributes:
         - height: the height of the maze
         - width: the width of the maze
-        - start_point: the starting point of the maze
-        - end_point: the ending point of the maze
         - MazeGraph: the graph representation of maze
         - edges: the edges that this graph have
+        - cycles: number of cycles in the maze
 
     Representation Invariants:
         - height >= 3 and width >= 3
@@ -35,12 +34,14 @@ class Maze:
     width: int
     MazeGraph: Graph
     edges: list[tuple]
+    cycles: int
     _removed_edges: list[tuple]
 
-    def __init__(self, width: int, height: int) -> None:
+    def __init__(self, width: int, height: int, cycles: int = 0) -> None:
         """Initialize a maze with a specified width and height"""
         self.height = height
         self.width = width
+        self.cycles = cycles
         self.MazeGraph = Graph()
         # First, initialize all the vertices, in a x * y size.
         full_graph = Graph()
@@ -69,19 +70,26 @@ class Maze:
         # At this point, the graph would form a rectangular shape. (like a chess board)
         # Now, we remove all the cycles inside the graph and initialize the new graph.
         self.edges = full_graph.spanning_tree()  # list[tuple]
+
+        # make a deepcopy of edges
         edges_copy = deepcopy(self.edges)
         for edge in edges_copy:
             self.MazeGraph.add_edge(edge[0], edge[1])
 
-        # stores the removed edges that would make a cycle in the maze..
+        # stores the removed edges that would make a cycle in the maze.
         self._removed_edges = []
         for edge in original_edges:
             if not (edge in self.edges or (edge[1], edge[0]) in self.edges):
                 self._removed_edges.append(edge)
-
-        print()
         # We have chosen vertex located at (0, 0) to be the starting point
         # and vertex located at (width - 1, height - 1) to be the ending point
+
+        for _ in range(0, self.cycles):
+            random_edge = random.choice(list(self._removed_edges))
+            self._removed_edges.remove(random_edge)
+            v1 = random_edge[0]
+            v2 = random_edge[1]
+            self.edges.append((v1, v2))
 
     def maze_graph_to_2d_array(self) -> list[list[int]]:
         """Convert maze in a graph form into a 2-dimensional array,
@@ -107,15 +115,16 @@ class Maze:
                 maze_array[max(point1[0], point2[0]) * 2][point1[1] * 2 + 1] = 1
         return maze_array
 
-    def add_cycle(self, num_cycles: int) -> None:
-        """Add a user-specified number of cycles into the Maze."""
-
-        for _ in range(0, num_cycles):
-            random_edge = random.choice(list(self._removed_edges))
-            self._removed_edges.remove(random_edge)
-            v1 = random_edge[0]
-            v2 = random_edge[1]
-            self.edges.append((v1, v2))
+    # def add_cycle(self, num_cycles: int) -> None:
+    #     """Add a user-specified number of cycles into the Maze."""
+    #     if num_cycles == 0:
+    #         return
+    #     for _ in range(0, num_cycles):
+    #         random_edge = random.choice(list(self._removed_edges))
+    #         self._removed_edges.remove(random_edge)
+    #         v1 = random_edge[0]
+    #         v2 = random_edge[1]
+    #         self.edges.append((v1, v2))
 
 
 def print_2d_array(maze: list[list[bool]]):
