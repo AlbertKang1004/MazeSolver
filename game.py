@@ -33,11 +33,11 @@ class MazeGame:
         if isinstance(difficulty, int):
             if difficulty == 1:
                 maze_size = (7, 7)
-            elif difficulty == 1:
+            elif difficulty == 2:
                 maze_size = (10, 10)
-            elif difficulty == 1:
+            elif difficulty == 3:
                 maze_size = (15, 15)
-            elif difficulty == 1:
+            elif difficulty == 4:
                 maze_size = (20, 20)
             else:
                 raise ValueError
@@ -55,17 +55,35 @@ class MazeGame:
 
         black = (0, 0, 0)
         white = (255, 255, 255)
+        red = (255, 0, 0)
+
         running = True
         squares = self.draw_maze_on_screen()
+        x = 120
+        y = 120
 
-        screen.fill(black)
+        background = pygame.Surface(self.screen_size())
         for square in squares:
-            pygame.draw.rect(screen, white, square)
-        pygame.display.update()
+            pygame.draw.rect(background, white, square)
+        mask = pygame.mask.from_surface(background)
+        screen.fill(black)
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+            key = pygame.key.get_pressed()
+            if key[pygame.K_LEFT]:
+                x -= 0.5
+            if key[pygame.K_RIGHT]:
+                x += 0.5
+            if key[pygame.K_UP]:
+                y -= 0.5
+            if key[pygame.K_DOWN]:
+                y += 0.5
+            screen.fill(black)
+            screen.blit(background, (0, 0))
+            pygame.draw.rect(screen, red, (x, y, 15, 15))
+            pygame.display.update()
         exit()
 
     def screen_size(self) -> tuple[int, int]:
