@@ -54,22 +54,22 @@ class MazeGame:
         pygame.init()
         screen = pygame.display.set_mode(self.screen_size())
         clock = pygame.time.Clock()
-        counter, text_timer = 10, '10'.rjust(3)
+        counter, text_timer = self._time_limit, str(self._time_limit).rjust(3)
         pygame.time.set_timer(pygame.USEREVENT, 1000)
         font_timer = pygame.font.Font('font/timer.ttf', 30)
 
         running = True
         w, h = screen.get_width(), screen.get_height()
         squares = self.draw_maze_on_screen()
-        squares.append(pygame.Rect(100 + self.pixel, 100 - self.pixel, self.pixel, self.pixel))
+        squares.append(pygame.Rect(self.pixel, 0, self.pixel, 1))
         # This is the square that blocks the entrance so that player cannot go out of the maze.
 
         # Starting Points
-        x, y = 100 + self.pixel + 2, 100
+        x, y = 100 + self.pixel + 2, 102
 
         background = pygame.Surface(self.screen_size())
         for square in squares:
-            if square.x == 100 + self.pixel and square.y == 100 - self.pixel:
+            if square.x == self.pixel and square.y == 0:
                 pygame.draw.rect(background, pygame.Color('black'), square)
                 # Since we don't want to see starting point blocked by a white square, we will make it invisible.
             else:
@@ -84,21 +84,31 @@ class MazeGame:
             for event in pygame.event.get():
                 if event.type == pygame.USEREVENT:
                     counter -= 1
-                    text_timer = str(counter).rjust(3) if counter > 0 else 'boom!'
+                    if counter > 0:
+                        text_timer = str(counter).rjust(3)
+                    else:
+                        font = pygame.font.Font('font/game_over.ttf', 50)
+                        text = font.render("GAME OVER", True, pygame.Color('red'))
+                        text_rect = text.get_rect(center=(w / 2, h / 2))
+                        screen.fill(pygame.Color('black'))
+                        screen.blit(text, text_rect)
+                        pygame.display.update()
+                        pygame.time.delay(3000)
+                        exit()
                 if event.type == pygame.QUIT:
                     running = False
             key = pygame.key.get_pressed()
             if key[pygame.K_LEFT]:
-                if not any(square.collidepoint(l) for square in squares):
+                if not any(square.collidepoint(l[0] - 100, l[1] - 100) for square in squares):
                     x -= 2
             if key[pygame.K_RIGHT]:
-                if not any(square.collidepoint(r) for square in squares):
+                if not any(square.collidepoint(r[0] - 100, r[1] - 100) for square in squares):
                     x += 2
             if key[pygame.K_UP]:
-                if not any(square.collidepoint(t) for square in squares):
+                if not any(square.collidepoint(t[0] - 100, t[1] - 100) for square in squares):
                     y -= 2
             if key[pygame.K_DOWN]:
-                if not any(square.collidepoint(b) for square in squares):
+                if not any(square.collidepoint(b[0] - 100, b[1] - 100) for square in squares):
                     y += 2
             if endpoint.collidepoint(b):
                 font = pygame.font.Font('font/game_over.ttf', 50)
@@ -107,16 +117,17 @@ class MazeGame:
                 screen.fill(pygame.Color('black'))
                 screen.blit(text, text_rect)
                 pygame.display.update()
-                pygame.time.delay(5000)
+                pygame.time.delay(3000)
                 exit()
 
             screen.fill(pygame.Color('black'))
-            screen.blit(background, (0, 0))
-            screen.blit(font_timer.render(text_timer, True, pygame.Color('white')), (32, 48))
+            screen.blit(background, (100, 100))
 
             pygame.draw.rect(screen, pygame.Color('red'), player)
             pygame.draw.rect(screen, pygame.Color('goldenrod'), endpoint)
+
             pygame.time.delay(10)
+            screen.blit(font_timer.render(text_timer, True, pygame.Color('white')), (32, 48))
             pygame.display.flip()
             clock.tick(60)
         exit()
@@ -132,7 +143,7 @@ class MazeGame:
         for x in range(len(maze_arr)):
             for y in range(len(maze_arr[0])):
                 if maze_arr[x][y] == 0:  # if it is blocked (white)
-                    squares_so_far.append(pygame.Rect(x * self.pixel + 100, y * self.pixel + 100,
+                    squares_so_far.append(pygame.Rect(x * self.pixel, y * self.pixel,
                                                       self.pixel, self.pixel))
         return squares_so_far
 
