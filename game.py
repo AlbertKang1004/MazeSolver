@@ -53,8 +53,13 @@ class MazeGame:
         """Run the game!"""
         pygame.init()
         screen = pygame.display.set_mode(self.screen_size())
+        clock = pygame.time.Clock()
+        counter, text_timer = 10, '10'.rjust(3)
+        pygame.time.set_timer(pygame.USEREVENT, 1000)
+        font_timer = pygame.font.Font('font/timer.ttf', 30)
 
         running = True
+        w, h = screen.get_width(), screen.get_height()
         squares = self.draw_maze_on_screen()
         squares.append(pygame.Rect(100 + self.pixel, 100 - self.pixel, self.pixel, self.pixel))
         # This is the square that blocks the entrance so that player cannot go out of the maze.
@@ -73,10 +78,13 @@ class MazeGame:
         screen.fill(pygame.Color('black'))
         while running:
             player = pygame.Rect(x, y, self.pixel - 5, self.pixel - 5)
-            endpoint = pygame.Rect(screen.get_width() - 2 * self.pixel - 100, screen.get_height() - self.pixel - 100,
+            endpoint = pygame.Rect(w - 2 * self.pixel - 100, h - self.pixel - 100,
                                    self.pixel, self.pixel)
             t, l, r, b = player.midtop, player.midleft, player.midright, player.midbottom
             for event in pygame.event.get():
+                if event.type == pygame.USEREVENT:
+                    counter -= 1
+                    text_timer = str(counter).rjust(3) if counter > 0 else 'boom!'
                 if event.type == pygame.QUIT:
                     running = False
             key = pygame.key.get_pressed()
@@ -93,9 +101,10 @@ class MazeGame:
                 if not any(square.collidepoint(b) for square in squares):
                     y += 2
             if endpoint.collidepoint(b):
-                font = pygame.font.Font('Fira Code', 100)
-                text = font.render("You win!", True, pygame.Color('green'))
-                text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
+                font = pygame.font.Font('font/game_over.ttf', 50)
+                text = font.render("YOU WIN", True, pygame.Color('brown'))
+                text_rect = text.get_rect(center=(w / 2, h / 2))
+                screen.fill(pygame.Color('black'))
                 screen.blit(text, text_rect)
                 pygame.display.update()
                 pygame.time.delay(5000)
@@ -103,11 +112,13 @@ class MazeGame:
 
             screen.fill(pygame.Color('black'))
             screen.blit(background, (0, 0))
+            screen.blit(font_timer.render(text_timer, True, pygame.Color('white')), (32, 48))
 
             pygame.draw.rect(screen, pygame.Color('red'), player)
             pygame.draw.rect(screen, pygame.Color('goldenrod'), endpoint)
             pygame.time.delay(10)
-            pygame.display.update()
+            pygame.display.flip()
+            clock.tick(60)
         exit()
 
     def screen_size(self) -> tuple[int, int]:
