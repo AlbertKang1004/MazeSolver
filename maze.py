@@ -142,19 +142,6 @@ class Maze:
         return maze_array
 
 
-def print_2d_array(maze: list[list[bool]]) -> None:
-    """Print two-dimensional array with emojis."""
-    for y in range(len(maze[0])):
-        for x in range(len(maze)):
-            if maze[x][y] == 2:
-                print('🟫', end="")
-            elif maze[x][y] == 1:
-                print('⬛', end="")
-            else:
-                print('⬜', end="")
-        print()
-
-
 if __name__ == '__main__':
     import doctest
     doctest.testmod(verbose=True)
