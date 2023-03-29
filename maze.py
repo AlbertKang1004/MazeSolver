@@ -8,47 +8,52 @@ Group Members:
 
 This file contains a maze class, which includes various fundcions."""
 
-from graph import Graph
-from copy import deepcopy
 import random
+from copy import deepcopy
+from graph import Graph
 # from python_ta.contracts import check_contracts
+
 index = tuple[int, int]
+
 
 # @check_contracts
 class Maze:
     """A Maze represented in a graph.
 
     Instance Attributes:
-        - height: the height of the maze
         - width: the width of the maze
-        - MazeGraph: the graph representation of maze
+        - height: the height of the maze
+        - maze_graph: the graph representation of maze
         - edges: the edges that this graph have
         - cycles: number of cycles in the maze
 
+    Private Instance Attributes:
+        - _removed_edges: stores the edge that was removed when a graph transformed into a spanning tree.
+                          Needed for adding cycles in a maze.
+
     Representation Invariants:
-        - height >= 3 and width >= 3
-        - start_point[0] == 0
-        - end_point[0] == height - 1
+        - self.width >= 3 and self.height >= 3
+        - cycles >= 0
     """
     width: int
     height: int
-    MazeGraph: Graph
+    maze_graph: Graph
     edges: list[tuple]
     cycles: int
     _removed_edges: list[tuple]
 
     def __init__(self, width: int, height: int, cycles: int = 0) -> None:
-        """Initialize a maze with a specified width and height"""
+        """Initialize a maze with a specified width and height."""
         self.width = width
         self.height = height
         self.cycles = cycles
-        self.MazeGraph = Graph()
-        # First, initialize all the vertices, in a x * y size.
+        self.maze_graph = Graph()
+        # First, initialize all the vertices.
         full_graph = Graph()
         for x in range(width):
             for y in range(height):
                 full_graph.add_vertex(x, y)
-                self.MazeGraph.add_vertex(x, y)
+                self.maze_graph.add_vertex(x, y)
 
         # Then, connect all the vertices together.
         for x in range(width):
@@ -65,41 +70,46 @@ class Maze:
                     else:  # lower-right corner of the maze
                         pass
         full_graph.remove_edge((width - 2, height - 1), (width - 1, height - 1))
+        # We want to remove one of the two paths connected to the endpoint of the maze.
 
         original_edges = full_graph.edges
-
         # At this point, the graph would form a rectangular shape. (like a chess board)
         # Now, we remove all the cycles inside the graph and initialize the new graph.
+
         self.edges = full_graph.spanning_tree()  # list[tuple]
 
         # make a deepcopy of edges
         edges_copy = deepcopy(self.edges)
         for edge in edges_copy:
-            self.MazeGraph.add_edge(edge[0], edge[1])
+            self.maze_graph.add_edge(edge[0], edge[1])
 
         # stores the removed edges that would make a cycle in the maze.
         self._removed_edges = []
         for edge in original_edges:
             if not (edge in self.edges or (edge[1], edge[0]) in self.edges):
                 self._removed_edges.append(edge)
+
         # We have chosen vertex located at (0, 0) to be the starting point
         # and vertex located at (width - 1, height - 1) to be the ending point
-
-        for _ in range(0, self.cycles):
+        for _ in range(self.cycles):
             random_edge = random.choice(list(self._removed_edges))
             self._removed_edges.remove(random_edge)
-            self.MazeGraph.add_edge(random_edge[0], random_edge[1])
+            self.maze_graph.add_edge(random_edge[0], random_edge[1])
             self.edges.append(random_edge)
 
     def find_solution(self) -> list[index]:
-        """Return the shortest path of the graph"""
-        return self.MazeGraph.bfs((0, 0), (self.width - 1, self.height - 1))
+        """Return the shortest path of the graph."""
+        return self.maze_graph.bfs((0, 0), (self.width - 1, self.height - 1))
 
-    def maze_graph_to_2d_array(self, show_solution = False) -> list[list[int]]:
+    def maze_graph_to_2d_array(self, show_solution: bool = False) -> list[list[int]]:
         """Convert maze in a graph form into a 2-dimensional array,
         so it is easier to visualize.
-        - 1 means it's opened
-        - 0 means it's closed
+            - 0 means it's closed
+            - 1 means it's opened
+            - 2 means it's used to display the path of the shortest solution
+
+        - If show_solution is not specified or False, it will not display the solution when printing out the maze.
+        - If show_solution is True, it will show the shortest solution with brown squares.
         """
         maze_array = [[1 if (x % 2 == 1 and y % 2 == 1) else 0 for y in range(self.height * 2 + 1)]
                       for x in range(self.width * 2 + 1)]
@@ -115,7 +125,7 @@ class Maze:
             x2, y2 = edge[1]
             if x1 == x2:  # if x-coordinates are the same
                 maze_array[x1 * 2 + 1][max(y1, y2) * 2] = 1
-            else: # if y-coordinates are the same
+            else:  # if y-coordinates are the same
                 maze_array[max(x1, x2) * 2][y1 * 2 + 1] = 1
 
         if show_solution:
@@ -132,7 +142,7 @@ class Maze:
         return maze_array
 
 
-def print_2d_array(maze: list[list[bool]]):
+def print_2d_array(maze: list[list[bool]]) -> None:
     """Print two-dimensional array with emojis."""
     for y in range(len(maze[0])):
         for x in range(len(maze)):
@@ -143,3 +153,17 @@ def print_2d_array(maze: list[list[bool]]):
             else:
                 print('⬜', end="")
         print()
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod(verbose=True)
+
+    import python_ta
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'max-nested-blocks': 4,
+        'extra-imports': ['random', 'copy', 'graph'],
+        'allowed-io': [],
+        'disable': ['E9992', 'E9997', 'E9998']
+    })

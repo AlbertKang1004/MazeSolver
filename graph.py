@@ -41,9 +41,9 @@ class Graph:
         The new vertex is not adjacent to any other vertices.
 
         Preconditions:
-            - item not in self._vertices
-            - 0 <= loc[0] < self.width
-            - 0 <= loc[1] < self.height
+            - (x, y) not in self._vertices
+            - 0 <= x < self.width
+            - 0 <= y < self.height
         """
         new_vertex = _Vertex((x, y), set())
         self._vertices[(x, y)] = new_vertex
@@ -70,7 +70,12 @@ class Graph:
             raise ValueError
 
     def remove_edge(self, loc1: index, loc2: index) -> None:
-        """remove edge located between two indices."""
+        """remove edge located between two indices.
+
+        Preconditions:
+            - loc1 in self._vertices
+            - loc2 in self._vertices
+        """
         v1 = self._vertices[loc1]
         v2 = self._vertices[loc2]
         if (loc1, loc2) in self.edges or (loc2, loc1) in self.edges:
@@ -111,6 +116,10 @@ class Graph:
 
         Note that the maze we made will have top-left node as a starting point,
         and bottom-right node as an ending point.
+
+        Preconditions:
+            - start in self._vertices
+            - end in self._vertices
         """
 
         visited = []
@@ -149,7 +158,7 @@ class _Vertex:
         - neighbours: Vertices that are connected to this vertex.
 
     Representation Invaritants:
-        - loc[0] >= 0 and loc[1] >= 0
+        - self.loc[0] >= 0 and self.loc[1] >= 0
     """
     loc: index
     neighbours: set[_Vertex]
@@ -178,10 +187,9 @@ class _Vertex:
 
 
 if __name__ == '__main__':
-    # When you are ready to check your work with python_ta, uncomment the following lines.
-    # (In PyCharm, select the lines below and press Ctrl/Cmd + / to toggle comments.)
-    # You can use "Run file in Python Console" to run PythonTA,
-    # and then also test your methods manually in the console.
+    import doctest
+    doctest.testmod(verbose=True)
+
     import python_ta
     python_ta.check_all(config={
         'max-line-length': 120,

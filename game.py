@@ -8,29 +8,29 @@ Group Members:
 
 This file contains a MazeGame class."""
 
-import pygame
-from sys import exit
-from maze import Maze
 from typing import Any
-import python_ta
+import pygame
+from maze import Maze
+
 
 class MazeGame:
     """MazeGame class where user can run a game.
 
+    Instance Attributes:
+        - maze: the maze given to the pygame console.
+        - pixel: specifies the size of the each pixel, default at 20.
+
     Private Instance Attributes:
-        - _difficulty: defines the difficulty of the maze (from 1 to 4)
-            if the difficulty is in a tuple form (m, n), create a maze of m * n.
         - _time_limit: in seconds, if the time limit is up, the game is over.
-        - _cycles: set the number of cycles inside the maze
 
     Representation Invariants:
-        - isinstance(self._difficulty, int) and (1 <= self._difficulty <= 4)
         - isinstance(self._difficulty, tuple[int, int]) and (self._difficulty[0] >= 3 and self._difficulty[1] >= 3)
-        - _time_limit >= 10
+        - self._time_limit >= 1
     """
     _time_limit: int
     maze: Maze
     pixel: int = 20
+
     def __init__(self, difficulty: int | tuple[int, int], time_limit: int, cycles: int = 0) -> None:
         if isinstance(difficulty, int):
             if difficulty == 1:
@@ -42,13 +42,12 @@ class MazeGame:
             elif difficulty == 4:
                 maze_size = (20, 20)
             else:
-                raise ValueError
+                maze_size = (10, 10)  # Default Case
         else:  # if self._difficulty is in a tuple form
             maze_size = difficulty
 
         self._time_limit = time_limit
         self.maze = Maze(maze_size[0], maze_size[1], cycles)
-
 
     def run(self) -> None:
         """Run the game!"""
@@ -61,28 +60,18 @@ class MazeGame:
 
         running = True
         w, h = screen.get_width(), screen.get_height()
-        mw, mh = self.maze.width, self.maze.height
-        squares = self.draw_maze_on_screen()
-        squares.append(pygame.Rect(self.pixel, 0, self.pixel, 1))
-        # This is the square that blocks the entrance so that player cannot go out of the maze.
 
-        # Starting Points
+        # Starting Point for the Player
         x, y = 100 + self.pixel + 2, 102
 
-        background = pygame.Surface(self.screen_size())
-        for square in squares:
-            if square.x == self.pixel and square.y == 0:
-                pygame.draw.rect(background, pygame.Color('black'), square)
-                # Since we don't want to see starting point blocked by a white square, we will make it invisible.
-            else:
-                pygame.draw.rect(background, pygame.Color('white'), square)
+        squares = self.create_squares()
+        background = self.draw_maze_on_surface(squares)
 
         screen.fill(pygame.Color('black'))
         while running:
             player = pygame.Rect(x, y, self.pixel - 5, self.pixel - 5)
             endpoint = pygame.Rect(w - 2 * self.pixel - 100, h - self.pixel - 100,
                                    self.pixel, self.pixel)
-            t, l, r, b = player.midtop, player.midleft, player.midright, player.midbottom
             clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.USEREVENT:
@@ -101,20 +90,10 @@ class MazeGame:
                         exit()
                 if event.type == pygame.QUIT:
                     running = False
-            key = pygame.key.get_pressed()
-            if key[pygame.K_LEFT]:
-                if not any(square.collidepoint(l[0] - 100, l[1] - 100) for square in squares):
-                    x -= 2
-            if key[pygame.K_RIGHT]:
-                if not any(square.collidepoint(r[0] - 100, r[1] - 100) for square in squares):
-                    x += 2
-            if key[pygame.K_UP]:
-                if not any(square.collidepoint(t[0] - 100, t[1] - 100) for square in squares):
-                    y -= 2
-            if key[pygame.K_DOWN]:
-                if not any(square.collidepoint(b[0] - 100, b[1] - 100) for square in squares):
-                    y += 2
-            if endpoint.collidepoint(b):
+
+            x, y = check_collison_and_move(player, squares)
+
+            if endpoint.collidepoint(player.midbottom):
                 screen.fill(pygame.Color('black'))
                 print_on_screen(screen, 'font/game_over.ttf', 50, "YOU WIN", 'brown', (w / 2, h / 2))
                 pygame.time.delay(3000)
@@ -135,7 +114,7 @@ class MazeGame:
         """Calculates how big the screen should be"""
         return (self.maze.width * 2 + 1) * self.pixel + 200, (self.maze.height * 2 + 1) * self.pixel + 200
 
-    def draw_maze_on_screen(self) -> list[pygame.Rect]:
+    def create_squares(self) -> list[pygame.Rect]:
         """return x and y coordinates for the squares"""
         maze_arr = self.maze.maze_graph_to_2d_array()
         squares_so_far = []
@@ -146,6 +125,38 @@ class MazeGame:
                                                       self.pixel, self.pixel))
         return squares_so_far
 
+    def draw_maze_on_surface(self, squares: list[pygame.Rect]) -> pygame.Surface:
+        """Draw a maze on the given surface using the squares given."""
+        background = pygame.Surface(self.screen_size())
+        squares.append(pygame.Rect(self.pixel, 0, self.pixel, 1))
+        for square in squares:
+            if square.x == self.pixel and square.y == 0:
+                pygame.draw.rect(background, pygame.Color('black'), square)
+                # Since we don't want to see starting point blocked by a white square, we will make it invisible.
+            else:
+                pygame.draw.rect(background, pygame.Color('white'), square)
+        return background
+
+
+def check_collison_and_move(player: pygame.Rect, maze: list[pygame.Rect]) -> tuple[int, int]:
+    """Check if the player is collided to the wall and decide to move or not."""
+    t, l, r, b = player.midtop, player.midleft, player.midright, player.midbottom
+    key = pygame.key.get_pressed()
+    if key[pygame.K_LEFT]:
+        if not any(square.collidepoint(l[0] - 100, l[1] - 100) for square in maze):
+            return player.x - 2, player.y
+    if key[pygame.K_RIGHT]:
+        if not any(square.collidepoint(r[0] - 100, r[1] - 100) for square in maze):
+            return player.x + 2, player.y
+    if key[pygame.K_UP]:
+        if not any(square.collidepoint(t[0] - 100, t[1] - 100) for square in maze):
+            return player.x, player.y - 2
+    if key[pygame.K_DOWN]:
+        if not any(square.collidepoint(b[0] - 100, b[1] - 100) for square in maze):
+            return player.x, player.y + 2
+    return player.x, player.y
+
+
 def print_on_screen(screen: pygame.Surface, font: str, font_size: int, text: str, color: str, text_loc: Any) -> None:
     """Print text on the game screen."""
     f = pygame.font.Font(font, font_size)
@@ -153,6 +164,8 @@ def print_on_screen(screen: pygame.Surface, font: str, font_size: int, text: str
     tr = t.get_rect(center=text_loc)
     screen.blit(t, tr)
     pygame.display.update()
+
+
 def draw_solution_path(maze: Maze, screen: pygame.Surface, color: str, pixel: int) -> None:
     """Draw the line that shows the solution."""
     mw, mh = maze.width, maze.height
@@ -172,8 +185,16 @@ def draw_solution_path(maze: Maze, screen: pygame.Surface, color: str, pixel: in
                          ((2 * x2 + 1.5) * pixel, (2 * y2 + 1.5) * pixel),
                          width=5)
 
-# python_ta.check_all(config={
-#     'extra-imports': [],  # the names (strs) of imported modules
-#     'allowed-io': [],     # the names (strs) of functions that call print/open/input
-#     'max-line-length': 120
-# })
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod(verbose=True)
+
+    import python_ta
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'max-nested-blocks': 4,
+        'extra-imports': ['pygame', 'maze', 'sys', 'typing'],
+        'allowed-io': [],
+        'disable': ['E9992', 'E9997', 'E9998', 'E1101']
+    })
