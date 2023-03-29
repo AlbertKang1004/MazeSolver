@@ -13,7 +13,7 @@ from typing import Tuple
 # from python_ta.contracts import check_contracts
 import random
 
-index = Tuple[int, int]
+graph_index = Tuple[int, int]
 
 # @check_contracts
 class Graph:
@@ -29,15 +29,12 @@ class Graph:
             A list of edges.
 
     """
-    _vertices: dict[index, _Vertex]
-    edges: set[tuple[index, index]]
-    graph_dict: dict[index, list[index]]
+    _vertices: dict[graph_index, _Vertex]
+    edges: set[tuple[graph_index, graph_index]]
 
     def __init__(self) -> None:
         self._vertices = {}
         self.edges = set()
-        self.graph_dict = {nodes: [neighbour.loc for neighbour in self._vertices[nodes].neighbours]
-                           for nodes in self._vertices}
 
     def add_vertex(self, x: int, y: int) -> None:
         """Add a vertex with the given co-ordinates to this graph.
@@ -51,14 +48,13 @@ class Graph:
         new_vertex = _Vertex((x, y), set())
         self._vertices[(x, y)] = new_vertex
 
-    def add_edge(self, loc1: index, loc2: index) -> None:
+    def add_edge(self, loc1: graph_index, loc2: graph_index) -> None:
         """Add an edge between the two vertices with the given coordinates in this graph.
 
         Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
 
         Preconditions:
             - loc1 != loc2
-            - loc1 in self._vertices and loc2 in self._vertices
         """
         if loc1 in self._vertices and loc2 in self._vertices:
             # Add the edge between the two vertices
@@ -73,7 +69,7 @@ class Graph:
         else:
             raise ValueError
 
-    def spanning_tree(self) -> list[index]:
+    def spanning_tree(self) -> list[graph_index]:
         """Return a subset of the edges of this graph that form a spanning tree.
 
         The edges are returned as a list of sets, where each set contains the two
@@ -89,15 +85,18 @@ class Graph:
 
         return start_vertex.get_spanning_tree(set())
 
-    def get_graph_dictionary(self) -> dict[index, list[index]]:
+    def get_graph_dictionary(self) -> dict[graph_index, list[graph_index]]:
         """Return the dictionary version of the graph.
         This function is very important for the Breath-First Search Algorithm.
         """
         return {nodes: [neighbour.loc for neighbour in self._vertices[nodes].neighbours]
-         for nodes in self._vertices}
+        for nodes in self._vertices}
 
-    def bfs(self, start: index, end: index) -> list[index]:
-        """Return the fastest path possible of the graph using the Breadth-First Search.
+    def bfs(self, start: graph_index, end: graph_index) -> list[graph_index]:
+        """Return the shortest solution for the graph, using the Breadth-First Search.
+
+        Note that the maze we made will have top-left node as a starting point,
+        and bottom-right node as an ending point.
         """
 
         visited = []
@@ -132,23 +131,22 @@ class _Vertex:
     """A vertex in the MazeGraph.
 
     Instance Attributes:
-
         - loc: The coordinates of the vertex, represented as a tuple of (x, y) form
-        - neighbours: The vertices that are connected to this vertex
+        - neighbours: Vertices that are connected to this vertex.
 
     Representation Invaritants:
-        - loc[0] > 0 and loc[1] > 0
+        - loc[0] >= 0 and loc[1] >= 0
     """
-    loc: tuple[int, int]
+    loc: graph_index
     neighbours: set[_Vertex]
 
-    def __init__(self, loc: tuple[int, int], neighbours: set[_Vertex]):
+    def __init__(self, loc: graph_index, neighbours: set[_Vertex]):
         self.loc = loc
         self.neighbours = neighbours
 
     def get_spanning_tree(self, visited: set[_Vertex]) -> list[tuple]:
         """Return a spanning tree for all items this vertex is connected to,
-        without using any of the vertices in visited
+        without using any of the vertices in visited.
 
         Preconditions:
             - self not in visited
@@ -164,3 +162,16 @@ class _Vertex:
 
         return edges_so_far
 
+
+if __name__ == '__main__':
+    # When you are ready to check your work with python_ta, uncomment the following lines.
+    # (In PyCharm, select the lines below and press Ctrl/Cmd + / to toggle comments.)
+    # You can use "Run file in Python Console" to run PythonTA,
+    # and then also test your methods manually in the console.
+    import python_ta
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'max-nested-blocks': 4,
+        'extra-imports': ['random'],
+        'allowed-io': []
+    })

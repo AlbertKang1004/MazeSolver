@@ -12,6 +12,7 @@ import pygame
 from sys import exit
 from maze import Maze
 from typing import Any
+import python_ta
 
 class MazeGame:
     """MazeGame class where user can run a game.
@@ -29,7 +30,7 @@ class MazeGame:
     """
     _time_limit: int
     maze: Maze
-    pixel = 20
+    pixel: int = 20
     def __init__(self, difficulty: int | tuple[int, int], time_limit: int, cycles: int = 0) -> None:
         if isinstance(difficulty, int):
             if difficulty == 1:
@@ -167,3 +168,9 @@ def print_on_screen(screen: pygame.Surface, font: str, font_size: int, text: str
     tr = t.get_rect(center=text_loc)
     screen.blit(t, tr)
     pygame.display.update()
+
+# python_ta.check_all(config={
+#     'extra-imports': [],  # the names (strs) of imported modules
+#     'allowed-io': [],     # the names (strs) of functions that call print/open/input
+#     'max-line-length': 120
+# })
