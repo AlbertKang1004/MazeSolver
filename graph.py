@@ -9,9 +9,11 @@ Group Members:
 This file contains a basic Graph implementation, for future use."""
 
 from __future__ import annotations
+from typing import Tuple
 # from python_ta.contracts import check_contracts
 import random
 
+index = Tuple[int, int]
 
 # @check_contracts
 class Graph:
@@ -27,12 +29,15 @@ class Graph:
             A list of edges.
 
     """
-    _vertices: dict[tuple[int, int], _Vertex]
-    edges: set[tuple[tuple, tuple]]
+    _vertices: dict[index, _Vertex]
+    edges: set[tuple[index, index]]
+    graph_dict: dict[index, list[index]]
 
     def __init__(self) -> None:
         self._vertices = {}
         self.edges = set()
+        self.graph_dict = {nodes: [neighbour.loc for neighbour in self._vertices[nodes].neighbours]
+                           for nodes in self._vertices}
 
     def add_vertex(self, x: int, y: int) -> None:
         """Add a vertex with the given co-ordinates to this graph.
@@ -46,14 +51,14 @@ class Graph:
         new_vertex = _Vertex((x, y), set())
         self._vertices[(x, y)] = new_vertex
 
-    def add_edge(self, loc1: tuple[int, int], loc2: tuple[int, int]) -> None:
+    def add_edge(self, loc1: index, loc2: index) -> None:
         """Add an edge between the two vertices with the given coordinates in this graph.
 
         Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
 
         Preconditions:
             - loc1 != loc2
-            -
+            - loc1 in self._vertices and loc2 in self._vertices
         """
         if loc1 in self._vertices and loc2 in self._vertices:
             # Add the edge between the two vertices
@@ -64,10 +69,11 @@ class Graph:
             v2.neighbours.add(v1)
             edge = (v1.loc, v2.loc)
             self.edges.add(edge)
+
         else:
             raise ValueError
 
-    def spanning_tree(self) -> list[tuple[int, int]]:
+    def spanning_tree(self) -> list[index]:
         """Return a subset of the edges of this graph that form a spanning tree.
 
         The edges are returned as a list of sets, where each set contains the two
@@ -82,6 +88,43 @@ class Graph:
         start_vertex = random.choice(all_vertices)  # Could also use random.choice(all_vertices)
 
         return start_vertex.get_spanning_tree(set())
+
+    def get_graph_dictionary(self) -> dict[index, list[index]]:
+        """Return the dictionary version of the graph.
+        This function is very important for the Breath-First Search Algorithm.
+        """
+        return {nodes: [neighbour.loc for neighbour in self._vertices[nodes].neighbours]
+         for nodes in self._vertices}
+
+    def bfs(self, start: index, end: index) -> list[index]:
+        """Return the fastest path possible of the graph using the Breadth-First Search.
+        """
+
+        visited = []
+        queue = [[start]]
+
+        if start == end:
+            return []
+
+        while queue:
+            path = queue.pop(0)
+            node = path[-1]
+
+            if node not in visited:
+                neighbours = self.get_graph_dictionary()[node]
+
+                for neighbour in neighbours:
+                    new_path = list(path)
+                    new_path.append(neighbour)
+                    queue.append(new_path)
+
+                    if neighbour == end:
+                        return new_path
+
+                visited.append(node)
+
+        raise AssertionError
+        # This code should be unreachable as maze's starting point and ending point is connected
 
 
 # @check_contracts
@@ -120,3 +163,4 @@ class _Vertex:
                 edges_so_far.extend(u.get_spanning_tree(visited))
 
         return edges_so_far
+

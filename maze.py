@@ -11,6 +11,7 @@ This file contains a maze class, which includes various fundcions."""
 from graph import Graph
 from copy import deepcopy
 import random
+
 # from python_ta.contracts import check_contracts
 
 
@@ -91,11 +92,11 @@ class Maze:
             v2 = random_edge[1]
             self.edges.append((v1, v2))
 
-    def maze_graph_to_2d_array(self) -> list[list[int]]:
+    def maze_graph_to_2d_array(self, show_solution = False) -> list[list[int]]:
         """Convert maze in a graph form into a 2-dimensional array,
         so it is easier to visualize.
-        - True means it's opened -> 1
-        - False means it's closed -> 0
+        - 1 means it's opened
+        - 0 means it's closed
         """
         maze_array = [[1 if (x % 2 == 1 and y % 2 == 1) else 0 for y in range(self.width * 2 + 1)]
                       for x in range(self.height * 2 + 1)]
@@ -113,25 +114,27 @@ class Maze:
                 maze_array[point1[0] * 2 + 1][max(point1[1], point2[1]) * 2] = 1
             else: # if y-coordinates are the same
                 maze_array[max(point1[0], point2[0]) * 2][point1[1] * 2 + 1] = 1
-        return maze_array
 
-    # def add_cycle(self, num_cycles: int) -> None:
-    #     """Add a user-specified number of cycles into the Maze."""
-    #     if num_cycles == 0:
-    #         return
-    #     for _ in range(0, num_cycles):
-    #         random_edge = random.choice(list(self._removed_edges))
-    #         self._removed_edges.remove(random_edge)
-    #         v1 = random_edge[0]
-    #         v2 = random_edge[1]
-    #         self.edges.append((v1, v2))
+        if show_solution:
+            path = bfs((0, 0), (self.width, self.height))
+
+            maze_array[1][0] = 2  # Starting point
+            for i in range(len(path) - 1):
+                x1, y1 = path[i]
+                x2, y2 = path[i + 1]
+                maze_array[x1 * 2 + 1][y1 * 2 + 1] = 2
+                maze_array[x1 + x2 + 1][y1 + y2 + 1] = 2
+            maze_array[-2][-2:-1] = 2  # Ending point
+        return maze_array
 
 
 def print_2d_array(maze: list[list[bool]]):
     """Print two-dimensional array with emojis."""
     for y in range(len(maze)):
         for x in range(len(maze[0])):
-            if maze[x][y] == 1:
+            if maze[x][y] == 2:
+                print('🟥', end="")
+            elif maze[x][y] == 1:
                 print('⬛', end="")
             else:
                 print('⬜', end="")

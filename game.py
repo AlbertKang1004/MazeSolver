@@ -56,7 +56,7 @@ class MazeGame:
         clock = pygame.time.Clock()
         counter, text_timer = self._time_limit, str(self._time_limit).rjust(3)
         pygame.time.set_timer(pygame.USEREVENT, 1000)
-        font_timer = pygame.font.Font('font/timer.ttf', 30)
+        font_timer = pygame.font.Font('font/timer.ttf', 50)
 
         running = True
         w, h = screen.get_width(), screen.get_height()
@@ -127,7 +127,7 @@ class MazeGame:
             pygame.draw.rect(screen, pygame.Color('goldenrod'), endpoint)
 
             pygame.time.delay(10)
-            screen.blit(font_timer.render(text_timer, True, pygame.Color('white')), (32, 48))
+            screen.blit(font_timer.render(text_timer, True, pygame.Color('white')), (w - 100, 30))
             pygame.display.flip()
             clock.tick(60)
         exit()
