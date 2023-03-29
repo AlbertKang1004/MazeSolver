@@ -31,8 +31,8 @@ class Maze:
         - start_point[0] == 0
         - end_point[0] == height - 1
     """
-    height: int
     width: int
+    height: int
     MazeGraph: Graph
     edges: list[tuple]
     cycles: int
@@ -40,8 +40,8 @@ class Maze:
 
     def __init__(self, width: int, height: int, cycles: int = 0) -> None:
         """Initialize a maze with a specified width and height"""
-        self.height = height
         self.width = width
+        self.height = height
         self.cycles = cycles
         self.MazeGraph = Graph()
         # First, initialize all the vertices, in a x * y size.
@@ -88,9 +88,9 @@ class Maze:
         for _ in range(0, self.cycles):
             random_edge = random.choice(list(self._removed_edges))
             self._removed_edges.remove(random_edge)
-            v1 = random_edge[0]
-            v2 = random_edge[1]
-            self.edges.append((v1, v2))
+            self.MazeGraph.add_edge(random_edge[0], random_edge[1])
+            self.edges.append(random_edge)
+
 
     def maze_graph_to_2d_array(self, show_solution = False) -> list[list[int]]:
         """Convert maze in a graph form into a 2-dimensional array,
@@ -98,25 +98,25 @@ class Maze:
         - 1 means it's opened
         - 0 means it's closed
         """
-        maze_array = [[1 if (x % 2 == 1 and y % 2 == 1) else 0 for y in range(self.width * 2 + 1)]
-                      for x in range(self.height * 2 + 1)]
+        maze_array = [[1 if (x % 2 == 1 and y % 2 == 1) else 0 for y in range(self.height * 2 + 1)]
+                      for x in range(self.width * 2 + 1)]
         # Note that maze_array's index is in [x][y] order.
 
         # make the starting point and the ending point
         maze_array[1][0] = 1
-        maze_array[self.width * 2 - 1][self.height * 2] = 1
+        maze_array[-2][-1] = 1
 
         edges = deepcopy(self.edges)
         for edge in edges:
-            point1 = edge[0]
-            point2 = edge[1]
-            if point1[0] == point2[0]:  # if x-coordinates are the same
-                maze_array[point1[0] * 2 + 1][max(point1[1], point2[1]) * 2] = 1
+            x1, y1 = edge[0]
+            x2, y2 = edge[1]
+            if x1 == x2:  # if x-coordinates are the same
+                maze_array[x1 * 2 + 1][max(y1, y2) * 2] = 1
             else: # if y-coordinates are the same
-                maze_array[max(point1[0], point2[0]) * 2][point1[1] * 2 + 1] = 1
+                maze_array[max(x1, x2) * 2][y1 * 2 + 1] = 1
 
         if show_solution:
-            path = bfs((0, 0), (self.width, self.height))
+            path = self.MazeGraph.bfs((0, 0), (self.width - 1, self.height - 1))
 
             maze_array[1][0] = 2  # Starting point
             for i in range(len(path) - 1):
@@ -124,16 +124,17 @@ class Maze:
                 x2, y2 = path[i + 1]
                 maze_array[x1 * 2 + 1][y1 * 2 + 1] = 2
                 maze_array[x1 + x2 + 1][y1 + y2 + 1] = 2
-            maze_array[-2][-2:-1] = 2  # Ending point
+            maze_array[-2][-2] = 2  # Leftover case
+            maze_array[-2][-1] = 2  # Ending point
         return maze_array
 
 
 def print_2d_array(maze: list[list[bool]]):
     """Print two-dimensional array with emojis."""
-    for y in range(len(maze)):
-        for x in range(len(maze[0])):
+    for y in range(len(maze[0])):
+        for x in range(len(maze)):
             if maze[x][y] == 2:
-                print('🟥', end="")
+                print('🟫', end="")
             elif maze[x][y] == 1:
                 print('⬛', end="")
             else:
