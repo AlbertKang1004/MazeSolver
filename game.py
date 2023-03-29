@@ -29,6 +29,7 @@ class MazeGame:
     """
     _time_limit: int
     maze: Maze
+    pixel = 20
     def __init__(self, difficulty: int | tuple[int, int], time_limit: int, cycles: int = 0) -> None:
         if isinstance(difficulty, int):
             if difficulty == 1:
@@ -53,41 +54,65 @@ class MazeGame:
         pygame.init()
         screen = pygame.display.set_mode(self.screen_size())
 
-        black = (0, 0, 0)
-        white = (255, 255, 255)
-        red = (255, 0, 0)
-
         running = True
         squares = self.draw_maze_on_screen()
-        x = 120
-        y = 120
+        squares.append(pygame.Rect(100 + self.pixel, 100 - self.pixel, self.pixel, self.pixel))
+        # This is the square that blocks the entrance so that player cannot go out of the maze.
+
+        # Starting Points
+        x, y = 100 + self.pixel + 2, 100
 
         background = pygame.Surface(self.screen_size())
         for square in squares:
-            pygame.draw.rect(background, white, square)
-        mask = pygame.mask.from_surface(background)
-        screen.fill(black)
+            if square.x == 100 + self.pixel and square.y == 100 - self.pixel:
+                pygame.draw.rect(background, pygame.Color('black'), square)
+                # Since we don't want to see starting point blocked by a white square, we will make it invisible.
+            else:
+                pygame.draw.rect(background, pygame.Color('white'), square)
+
+        screen.fill(pygame.Color('black'))
         while running:
+            player = pygame.Rect(x, y, self.pixel - 5, self.pixel - 5)
+            endpoint = pygame.Rect(screen.get_width() - 2 * self.pixel - 100, screen.get_height() - self.pixel - 100,
+                                   self.pixel, self.pixel)
+            t, l, r, b = player.midtop, player.midleft, player.midright, player.midbottom
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
             key = pygame.key.get_pressed()
             if key[pygame.K_LEFT]:
-                x -= 0.5
+                if not any(square.collidepoint(l) for square in squares):
+                    x -= 2
             if key[pygame.K_RIGHT]:
-                x += 0.5
+                if not any(square.collidepoint(r) for square in squares):
+                    x += 2
             if key[pygame.K_UP]:
-                y -= 0.5
+                if not any(square.collidepoint(t) for square in squares):
+                    y -= 2
             if key[pygame.K_DOWN]:
-                y += 0.5
-            screen.fill(black)
+                if not any(square.collidepoint(b) for square in squares):
+                    y += 2
+            if endpoint.collidepoint(b):
+                font = pygame.font.Font('Fira Code', 100)
+                text = font.render("You win!", True, pygame.Color('green'))
+                text_rect = text.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
+                screen.blit(text, text_rect)
+                pygame.display.update()
+                pygame.time.delay(5000)
+                exit()
+
+            screen.fill(pygame.Color('black'))
             screen.blit(background, (0, 0))
-            pygame.draw.rect(screen, red, (x, y, 15, 15))
+
+            pygame.draw.rect(screen, pygame.Color('red'), player)
+            pygame.draw.rect(screen, pygame.Color('goldenrod'), endpoint)
+            pygame.time.delay(10)
             pygame.display.update()
         exit()
 
     def screen_size(self) -> tuple[int, int]:
-        return (self.maze.width * 2 + 1) * 25 + 200, (self.maze.height * 2 + 1) * 25 + 200
+        """Calculates how big the screen should be"""
+        return (self.maze.width * 2 + 1) * self.pixel + 200, (self.maze.height * 2 + 1) * self.pixel + 200
 
     def draw_maze_on_screen(self) -> list[pygame.Rect]:
         """return x and y coordinates for the squares"""
@@ -96,6 +121,7 @@ class MazeGame:
         for x in range(len(maze_arr)):
             for y in range(len(maze_arr[0])):
                 if maze_arr[x][y] == 0:  # if it is blocked (white)
-                    squares_so_far.append(pygame.Rect(x * 25 + 100, y * 25 + 100, 25, 25))
+                    squares_so_far.append(pygame.Rect(x * self.pixel + 100, y * self.pixel + 100,
+                                                      self.pixel, self.pixel))
         return squares_so_far
 
