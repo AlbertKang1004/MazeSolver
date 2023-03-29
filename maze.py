@@ -11,9 +11,9 @@ This file contains a maze class, which includes various fundcions."""
 from graph import Graph
 from copy import deepcopy
 import random
-
+from typing import Tuple
 # from python_ta.contracts import check_contracts
-
+index = Tuple[int, int]
 
 # @check_contracts
 class Maze:
@@ -91,6 +91,9 @@ class Maze:
             self.MazeGraph.add_edge(random_edge[0], random_edge[1])
             self.edges.append(random_edge)
 
+    def find_solution(self) -> list[index]:
+        """Return the shortest path of the graph"""
+        return self.MazeGraph.bfs((0, 0), (self.width - 1, self.height - 1))
 
     def maze_graph_to_2d_array(self, show_solution = False) -> list[list[int]]:
         """Convert maze in a graph form into a 2-dimensional array,
@@ -116,7 +119,7 @@ class Maze:
                 maze_array[max(x1, x2) * 2][y1 * 2 + 1] = 1
 
         if show_solution:
-            path = self.MazeGraph.bfs((0, 0), (self.width - 1, self.height - 1))
+            path = self.find_solution()
 
             maze_array[1][0] = 2  # Starting point
             for i in range(len(path) - 1):
