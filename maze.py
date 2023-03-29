@@ -11,9 +11,8 @@ This file contains a maze class, which includes various fundcions."""
 from graph import Graph
 from copy import deepcopy
 import random
-from typing import Tuple
 # from python_ta.contracts import check_contracts
-index = Tuple[int, int]
+index = tuple[int, int]
 
 # @check_contracts
 class Maze:
@@ -65,6 +64,7 @@ class Maze:
                         full_graph.add_edge((x, y), (x, y + 1))
                     else:  # lower-right corner of the maze
                         pass
+        full_graph.remove_edge((width - 2, height - 1), (width - 1, height - 1))
 
         original_edges = full_graph.edges
 

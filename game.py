@@ -83,28 +83,14 @@ class MazeGame:
             endpoint = pygame.Rect(w - 2 * self.pixel - 100, h - self.pixel - 100,
                                    self.pixel, self.pixel)
             t, l, r, b = player.midtop, player.midleft, player.midright, player.midbottom
+            clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.USEREVENT:
                     counter -= 1
                     if counter >= 0:
                         timer_text = str(counter).rjust(3)
                     else:
-                        path = self.maze.find_solution()
-                        pygame.draw.line(background, pygame.Color('red'), (1.5 * self.pixel, 0),
-                                         (1.5 * self.pixel, 1.5 * self.pixel), width=5)
-                        pygame.draw.line(background, pygame.Color('red'),
-                                         ((2 * mw - 0.5) * self.pixel,
-                                          (2 * mh - 0.5) * self.pixel),
-                                         ((2 * mw - 0.5) * self.pixel, (2 * mh + 1) * self.pixel),
-                                         width=5)
-                        for i in range(len(path) - 1):
-                            x1, y1 = path[i]
-                            x2, y2 = path[i + 1]
-                            pygame.draw.line(background, pygame.Color('red'),
-                                             ((2 * x1 + 1.5) * self.pixel, (2 * y1 + 1.5) * self.pixel),
-                                             ((2 * x2 + 1.5) * self.pixel, (2 * y2 + 1.5) * self.pixel),
-                                             width=5)
-
+                        draw_solution_path(self.maze, background, 'red', self.pixel)
                         screen.blit(background, (100, 100))
                         print_on_screen(screen, 'font/answer.ttf', 50, "ANSWER", 'red', (w / 2, 50))
                         pygame.time.delay(5000)
@@ -143,7 +129,6 @@ class MazeGame:
             pygame.time.delay(10)
             screen.blit(timer_font.render(timer_text, True, pygame.Color('white')), (w - 100, 30))
             pygame.display.flip()
-            clock.tick(60)
         exit()
 
     def screen_size(self) -> tuple[int, int]:
@@ -168,6 +153,24 @@ def print_on_screen(screen: pygame.Surface, font: str, font_size: int, text: str
     tr = t.get_rect(center=text_loc)
     screen.blit(t, tr)
     pygame.display.update()
+def draw_solution_path(maze: Maze, screen: pygame.Surface, color: str, pixel: int) -> None:
+    """Draw the line that shows the solution."""
+    mw, mh = maze.width, maze.height
+    path = maze.find_solution()
+    pygame.draw.line(screen, pygame.Color(color), (1.5 * pixel, 0),
+                     (1.5 * pixel, 1.5 * pixel), width=5)
+    pygame.draw.line(screen, pygame.Color(color),
+                     ((2 * mw - 0.5) * pixel,
+                      (2 * mh - 0.5) * pixel),
+                     ((2 * mw - 0.5) * pixel, (2 * mh + 1) * pixel),
+                     width=5)
+    for i in range(len(path) - 1):
+        x1, y1 = path[i]
+        x2, y2 = path[i + 1]
+        pygame.draw.line(screen, pygame.Color(color),
+                         ((2 * x1 + 1.5) * pixel, (2 * y1 + 1.5) * pixel),
+                         ((2 * x2 + 1.5) * pixel, (2 * y2 + 1.5) * pixel),
+                         width=5)
 
 # python_ta.check_all(config={
 #     'extra-imports': [],  # the names (strs) of imported modules

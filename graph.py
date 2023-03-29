@@ -9,11 +9,11 @@ Group Members:
 This file contains a basic Graph implementation, for future use."""
 
 from __future__ import annotations
-from typing import Tuple
 # from python_ta.contracts import check_contracts
 import random
 
-graph_index = Tuple[int, int]
+index = tuple[int, int]
+
 
 # @check_contracts
 class Graph:
@@ -29,8 +29,8 @@ class Graph:
             A list of edges.
 
     """
-    _vertices: dict[graph_index, _Vertex]
-    edges: set[tuple[graph_index, graph_index]]
+    _vertices: dict[index, _Vertex]
+    edges: set[tuple[index, index]]
 
     def __init__(self) -> None:
         self._vertices = {}
@@ -48,7 +48,7 @@ class Graph:
         new_vertex = _Vertex((x, y), set())
         self._vertices[(x, y)] = new_vertex
 
-    def add_edge(self, loc1: graph_index, loc2: graph_index) -> None:
+    def add_edge(self, loc1: index, loc2: index) -> None:
         """Add an edge between the two vertices with the given coordinates in this graph.
 
         Raise a ValueError if item1 or item2 do not appear as vertices in this graph.
@@ -69,7 +69,21 @@ class Graph:
         else:
             raise ValueError
 
-    def spanning_tree(self) -> list[graph_index]:
+    def remove_edge(self, loc1: index, loc2: index) -> None:
+        """remove edge located between two indices."""
+        v1 = self._vertices[loc1]
+        v2 = self._vertices[loc2]
+        if (loc1, loc2) in self.edges or (loc2, loc1) in self.edges:
+            if (loc1, loc2) in self.edges:
+                self.edges.remove((loc1, loc2))
+            else:
+                self.edges.remove((loc2, loc1))
+            v1.neighbours.remove(v2)
+            v2.neighbours.remove(v1)
+        else:
+            raise ValueError
+
+    def spanning_tree(self) -> list[index]:
         """Return a subset of the edges of this graph that form a spanning tree.
 
         The edges are returned as a list of sets, where each set contains the two
@@ -85,14 +99,14 @@ class Graph:
 
         return start_vertex.get_spanning_tree(set())
 
-    def get_graph_dictionary(self) -> dict[graph_index, list[graph_index]]:
+    def get_graph_dictionary(self) -> dict[index, list[index]]:
         """Return the dictionary version of the graph.
         This function is very important for the Breath-First Search Algorithm.
         """
         return {nodes: [neighbour.loc for neighbour in self._vertices[nodes].neighbours]
-        for nodes in self._vertices}
+                for nodes in self._vertices}
 
-    def bfs(self, start: graph_index, end: graph_index) -> list[graph_index]:
+    def bfs(self, start: index, end: index) -> list[index]:
         """Return the shortest solution for the graph, using the Breadth-First Search.
 
         Note that the maze we made will have top-left node as a starting point,
@@ -137,10 +151,10 @@ class _Vertex:
     Representation Invaritants:
         - loc[0] >= 0 and loc[1] >= 0
     """
-    loc: graph_index
+    loc: index
     neighbours: set[_Vertex]
 
-    def __init__(self, loc: graph_index, neighbours: set[_Vertex]):
+    def __init__(self, loc: index, neighbours: set[_Vertex]) -> None:
         self.loc = loc
         self.neighbours = neighbours
 
@@ -173,5 +187,6 @@ if __name__ == '__main__':
         'max-line-length': 120,
         'max-nested-blocks': 4,
         'extra-imports': ['random'],
-        'allowed-io': []
+        'allowed-io': [],
+        'disable': ['E9992', 'E9997']
     })
