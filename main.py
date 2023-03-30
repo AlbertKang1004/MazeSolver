@@ -66,3 +66,8 @@ def runner_pygame(difficulty: int | tuple[int, int], time_limit: int, cycles: in
     g.run()
 
 
+if __name__ == '__main__':
+    # Example Code
+    runner_maze(10, 10)  # Print the maze with a size of 10 * 10
+    runner_pygame(3, 30, 1)  # Play a maze game with difficulty 3 with a cycle, 30 seconds of time limit.
+
