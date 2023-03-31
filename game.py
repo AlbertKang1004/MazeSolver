@@ -186,6 +186,20 @@ def draw_solution_path(maze: Maze, screen: pygame.Surface, color: str, pixel: in
                          width=5)
 
 
+def user_input() -> tuple:
+    """ Takes in user input for the difficulty of the maze and how many cycles they want to be implemented.
+    For no cycles, the user should input 0 and for default difficulty the user should input -1. Only accepts numeric
+    input.
+
+    Representation Invariants:
+        - isinstance(difficulty, int) == True
+        - isinstance(cycles, int) == True
+    """
+    difficulty = input("What difficulty do you want to play on? Select -1 to play default mode.")
+    cycles = input("How many cycles do you want to add to this maze?")
+    return(difficulty, cycles)
+
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod(verbose=True)
