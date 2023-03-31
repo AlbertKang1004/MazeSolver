@@ -192,10 +192,18 @@ def user_input() -> tuple:
     input.
 
     Representation Invariants:
-        - isinstance(difficulty, int) == True
+        - isinstance(difficulty, int) == True or isinstance(difficulty, tuple) == True
         - isinstance(cycles, int) == True
     """
-    difficulty = input("What difficulty do you want to play on? Select -1 to play default mode.")
+    print("Welcome to our maze game. The objective is to solve a customizable maze before the timer runs out. You will"
+          "have  seconds. As a user, you are able to customize the maze you play on by choosing the difficulty that you"
+          "want, as well as how many cycles the maze will have. The difficulty refers to the size of the maze. The "
+          "default difficulties are as listed: \n")
+    print("1. 7x7 grid \n 2. 10x10 grid \n 3. 15x15 grid \n 4. 20x20 \n")
+    print("In addition to this, you can choose your own custom dimensions. Moving forward, the number of cycles in a "
+          "maze refers to how many loops are present. It is generally easier to play with more cycles. \n At the end"
+          "of the game, you will be shown the most optimal path that the maze has. Please customize your maze now. \n")
+    difficulty = input("What difficulty do you want to play on?")
     cycles = input("How many cycles do you want to add to this maze?")
     return(difficulty, cycles)
 
