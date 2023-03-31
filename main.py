@@ -68,6 +68,14 @@ def runner_pygame(difficulty: int | tuple[int, int], time_limit: int, cycles: in
 
 if __name__ == '__main__':
     # Example Code
+
+    # ========= runner_maze ==========
     runner_maze(10, 10)  # Print the maze with a size of 10 * 10
-    runner_pygame(3, 30, 1)  # Play a maze game with difficulty 3 with a cycle, 30 seconds of time limit.
+    # runner_maze(10, 10, cycles=2)  # Print the maze with a size of 10 * 10, with 2 cycles in it.
+    # runner_maze(15, 15, show_solution=True)
+
+    # ========= runner_pygame ==========
+    # runner_pygame(3, 30, cycles=1)  # Play a maze game with difficulty 3 with 1 cycle, 30 seconds of time limit.
+    # runner_pygame((13, 13), 60)  # PLay a maze game with custom difficulty (13 * 13) , 60 seconds of time limit.
+
 
